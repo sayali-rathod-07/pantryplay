@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 
-// 1. Full Ingredient List (41 items)
+// 1.Ingredient List 
 const INGREDIENTS_LIST = [
   { id: 1, name: 'Chicken', icon: '🍗' }, { id: 2, name: 'Beef', icon: '🥩' },
   { id: 3, name: 'Salmon', icon: '🐟' }, { id: 4, name: 'Pork', icon: '🥓' },
@@ -23,7 +23,7 @@ const INGREDIENTS_LIST = [
   { id: 35, name: 'Chocolate', icon: '🍫' }, { id: 36, name: 'Olive Oil', icon: '🫒' },
   { id: 37, name: 'Chili', icon: '🌶️' }, { id: 38, name: 'Ginger', icon: '🫚' },
   { id: 39, name: 'Basil', icon: '🌿' }, { id: 40, name: 'Cinnamon', icon: '🪵' },
-  { id: 41, name: 'Yogurt', icon: '🍦' }
+  { id: 41, name: 'Yogurt', icon: '🍦' }, {id:42, name: 'Pineapple', icon:'🍍'}
 ];
 
 function App() {
@@ -34,7 +34,7 @@ function App() {
   const [loading, setLoading] = useState(false); 
   const [expandedId, setExpandedId] = useState(null); 
   const [view, setView] = useState('search'); 
-  const [isVeg, setIsVeg] = useState(false); // Bonus: Veg state
+  const [isVeg, setIsVeg] = useState(false); // Veg state
 
   // 3. Logic: Filtered Recipes calculation
   const filteredRecipes = isVeg 
@@ -115,7 +115,7 @@ function App() {
               </button>
             </section>
 
-            {/* Bonus: Filter UI */}
+            {/* Filter UI */}
             {recipes.length > 0 && (
               <div className="filter-container">
                 <label className="veg-toggle">
