@@ -23,7 +23,7 @@ const INGREDIENTS_LIST = [
   { id: 35, name: 'Chocolate', icon: '🍫' }, { id: 36, name: 'Olive Oil', icon: '🫒' },
   { id: 37, name: 'Chili', icon: '🌶️' }, { id: 38, name: 'Ginger', icon: '🫚' },
   { id: 39, name: 'Basil', icon: '🌿' }, { id: 40, name: 'Cinnamon', icon: '🪵' },
-  { id: 41, name: 'Yogurt', icon: '🍦' }, { id: 42, name: 'Pineapple', icon: '🍍' }
+  { id: 41, name: 'Yogurt', icon: '🍦' }
 ];
 
 function App() {
