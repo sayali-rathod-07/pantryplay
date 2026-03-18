@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// 1. Ingredient List 
 const INGREDIENTS_LIST = [
   { id: 1, name: 'Chicken', icon: '🍗' }, { id: 2, name: 'Beef', icon: '🥩' },
   { id: 3, name: 'Salmon', icon: '🐟' }, { id: 4, name: 'Pork', icon: '🥓' },
@@ -27,7 +26,6 @@ const INGREDIENTS_LIST = [
 ];
 
 function App() {
-  // 2. States
   const [pantry, setPantry] = useState([]); 
   const [recipes, setRecipes] = useState([]); 
   const [loading, setLoading] = useState(false); 
@@ -87,6 +85,15 @@ function App() {
     }
   };
 
+  // Helper function to turn text into a clean array of steps
+  const formatInstructions = (text) => {
+    if (!text) return [];
+    // This regex splits by periods OR new lines
+    return text.split(/[.\n]/) 
+      .map(step => step.trim())
+      .filter(step => step.length > 5); // Only keep steps longer than 5 chars
+  };
+
   return (
     <div className="App">
       <header className="app-header">
@@ -119,30 +126,17 @@ function App() {
               </div>
               
               <div className="button-group">
-                <button 
-                  className="generate-btn" 
-                  onClick={fetchRecipes} 
-                  disabled={pantry.length === 0 || loading}
-                >
-                  {loading ? '🔍 Finding Recipes...' : 'What can I cook? 🍳'}
+                <button className="generate-btn" onClick={fetchRecipes} disabled={pantry.length === 0 || loading}>
+                  {loading ? '🔍 Finding...' : 'Cook? 🍳'}
                 </button>
-
-                {pantry.length > 0 && (
-                  <button className="reset-btn" onClick={resetPantry}>
-                    🧹 Reset
-                  </button>
-                )}
+                {pantry.length > 0 && <button className="reset-btn" onClick={resetPantry}>🧹 Reset</button>}
               </div>
             </section>
 
             {recipes.length > 0 && (
               <div className="filter-container">
                 <label className="veg-toggle">
-                  <input 
-                    type="checkbox" 
-                    checked={isVeg} 
-                    onChange={() => setIsVeg(!isVeg)} 
-                  />
+                  <input type="checkbox" checked={isVeg} onChange={() => setIsVeg(!isVeg)} />
                   🥗 Vegetarian Only
                 </label>
               </div>
@@ -154,85 +148,59 @@ function App() {
                   <img src={recipe.strMealThumb} alt={recipe.strMeal} />
                   <div className="recipe-content">
                     <h3>{recipe.strMeal}</h3>
-                    <p className="category-text">Category: {recipe.strCategory}</p>
                     <div className="card-actions">
-                      <button 
-                        className="details-btn"
-                        onClick={() => setExpandedId(expandedId === recipe.idMeal ? null : recipe.idMeal)}
-                      >
-                        {expandedId === recipe.idMeal ? 'Hide Details' : 'Show Details'}
+                      <button className="details-btn" onClick={() => setExpandedId(expandedId === recipe.idMeal ? null : recipe.idMeal)}>
+                        {expandedId === recipe.idMeal ? 'Hide' : 'Details'}
                       </button>
-                      <button 
-                        className={`favorite-btn ${favorites.some(f => f.idMeal === recipe.idMeal) ? 'active' : ''}`}
-                        onClick={() => toggleFavorite(recipe)}
-                      >
+                      <button className={`favorite-btn ${favorites.some(f => f.idMeal === recipe.idMeal) ? 'active' : ''}`} onClick={() => toggleFavorite(recipe)}>
                         {favorites.some(f => f.idMeal === recipe.idMeal) ? '❤️' : '🤍'}
                       </button>
                     </div>
-                    {/* ✨ Smart Instructions Logic ✨ */}
+
                     {expandedId === recipe.idMeal && (
                       <div className="instructions">
-                        <h4>Instructions:</h4>
+                        <h4>Step-by-Step:</h4>
                         <ol className="instructions-list">
-                          {recipe.strInstructions
-                            .split('.') 
-                            .filter(step => step.trim().length > 0) 
-                            .map((step, index) => (
-                              <li key={index}>{step.trim()}.</li> 
-                            ))}
+                          {formatInstructions(recipe.strInstructions).map((step, index) => (
+                            <li key={index}>{step}.</li>
+                          ))}
                         </ol>
                       </div>
                     )}
                   </div>
                 </div>
               ))}
-              {!loading && filteredRecipes.length === 0 && pantry.length > 0 && (
-                <div className="empty-state">
-                  <p>No recipes match your selection. Try another combo!</p>
-                </div>
-              )}
             </section>
           </>
         ) : (
           <section className="favorites-section">
-            <h2>📖 Your Saved Cookbook</h2>
-            {favorites.length > 0 ? (
-              <div className="recipe-results">
-                {favorites.map((recipe) => (
-                  <div key={recipe.idMeal} className="recipe-card">
-                    <img src={recipe.strMealThumb} alt={recipe.strMeal} />
-                    <div className="recipe-content">
-                      <h3>{recipe.strMeal}</h3>
-                      <div className="card-actions">
-                        {/* Adding "Show Details" to the favorites view as well */}
-                        <button 
-                          className="details-btn"
-                          onClick={() => setExpandedId(expandedId === recipe.idMeal ? null : recipe.idMeal)}
-                        >
-                          {expandedId === recipe.idMeal ? 'Hide' : 'Details'}
-                        </button>
-                        <button className="favorite-btn active" onClick={() => toggleFavorite(recipe)}>❤️</button>
-                      </div>
-                      
-                      {/* Expanded Details in Cookbook view */}
-                      {expandedId === recipe.idMeal && (
-                        <div className="instructions">
-                          <ol className="instructions-list">
-                            {recipe.strInstructions
-                              .split('.')
-                              .filter(s => s.trim().length > 0)
-                              .map((s, i) => <li key={i}>{s.trim()}.</li>)}
-                          </ol>
-                        </div>
-                      )}
+            <h2>📖 Saved Cookbook</h2>
+            <div className="recipe-results">
+              {favorites.map((recipe) => (
+                <div key={recipe.idMeal} className="recipe-card">
+                  <img src={recipe.strMealThumb} alt={recipe.strMeal} />
+                  <div className="recipe-content">
+                    <h3>{recipe.strMeal}</h3>
+                    <div className="card-actions">
+                      <button className="details-btn" onClick={() => setExpandedId(expandedId === recipe.idMeal ? null : recipe.idMeal)}>
+                        {expandedId === recipe.idMeal ? 'Hide' : 'Details'}
+                      </button>
+                      <button className="favorite-btn active" onClick={() => toggleFavorite(recipe)}>❤️</button>
                     </div>
+                    {expandedId === recipe.idMeal && (
+                      <div className="instructions">
+                        <ol className="instructions-list">
+                          {formatInstructions(recipe.strInstructions).map((step, index) => (
+                            <li key={index}>{step}.</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="empty-msg">Your cookbook is empty! Go back and heart some recipes. ❤️</p>
-            )}
-            <button className="generate-btn" onClick={() => setView('search')}>Back to Market</button>
+                </div>
+              ))}
+            </div>
+            <button className="generate-btn" onClick={() => setView('search')}>Back</button>
           </section>
         )}
       </main>
