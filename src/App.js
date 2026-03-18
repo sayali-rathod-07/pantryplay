@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Added useEffect import
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // 1. Ingredient List 
@@ -35,13 +35,12 @@ function App() {
   const [view, setView] = useState('search'); 
   const [isVeg, setIsVeg] = useState(false); 
 
-  // ✨ Persistent Favorites State (Step 1: Read from cabinet)
+  // Persistent Favorites State
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem('pantryPlay_favs');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // ✨ Sync Favorites to LocalStorage (Step 2: Write to cabinet)
   useEffect(() => {
     localStorage.setItem('pantryPlay_favs', JSON.stringify(favorites));
   }, [favorites]);
@@ -57,6 +56,12 @@ function App() {
     } else {
       setPantry([...pantry, name]);
     }
+  };
+
+  // Logic: Reset the pantry selection
+  const resetPantry = () => {
+    setPantry([]); // Clears selected ingredients
+    setRecipes([]); // Clears recipe results
   };
 
   const toggleFavorite = (recipe) => {
@@ -116,13 +121,22 @@ function App() {
                 ))}
               </div>
               
-              <button 
-                className="generate-btn" 
-                onClick={fetchRecipes} 
-                disabled={pantry.length === 0 || loading}
-              >
-                {loading ? '🔍 Finding Recipes...' : 'What can I cook? 🍳'}
-              </button>
+              {/* Added Button Group for Layout */}
+              <div className="button-group">
+                <button 
+                  className="generate-btn" 
+                  onClick={fetchRecipes} 
+                  disabled={pantry.length === 0 || loading}
+                >
+                  {loading ? '🔍 Finding Recipes...' : 'What can I cook? 🍳'}
+                </button>
+
+                {pantry.length > 0 && (
+                  <button className="reset-btn" onClick={resetPantry}>
+                    🧹 Reset
+                  </button>
+                )}
+              </div>
             </section>
 
             {recipes.length > 0 && (
