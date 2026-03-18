@@ -300,3 +300,22 @@
   color: #2d3748;
   transform: translateY(-2px);
 }
+
+.instructions-list {
+  text-align: left;
+  padding-left: 25px; 
+  margin-top: 10px;
+}
+
+.instructions-list li {
+  margin-bottom: 12px; 
+  color: #4a5568;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+
+.instructions-list li::marker {
+  color: #319795; 
+  font-weight: bold;
+}

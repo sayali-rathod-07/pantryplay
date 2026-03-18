@@ -35,7 +35,6 @@ function App() {
   const [view, setView] = useState('search'); 
   const [isVeg, setIsVeg] = useState(false); 
 
-  // Persistent Favorites State
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem('pantryPlay_favs');
     return saved ? JSON.parse(saved) : [];
@@ -45,7 +44,6 @@ function App() {
     localStorage.setItem('pantryPlay_favs', JSON.stringify(favorites));
   }, [favorites]);
 
-  // 3. Logic: Filtered Recipes calculation
   const filteredRecipes = isVeg 
     ? recipes.filter(r => r.strCategory === 'Vegetarian' || r.strCategory === 'Vegan') 
     : recipes;
@@ -58,10 +56,9 @@ function App() {
     }
   };
 
-  // Logic: Reset the pantry selection
   const resetPantry = () => {
-    setPantry([]); // Clears selected ingredients
-    setRecipes([]); // Clears recipe results
+    setPantry([]); 
+    setRecipes([]); 
   };
 
   const toggleFavorite = (recipe) => {
@@ -121,7 +118,6 @@ function App() {
                 ))}
               </div>
               
-              {/* Added Button Group for Layout */}
               <div className="button-group">
                 <button 
                   className="generate-btn" 
@@ -173,10 +169,18 @@ function App() {
                         {favorites.some(f => f.idMeal === recipe.idMeal) ? '❤️' : '🤍'}
                       </button>
                     </div>
+                    {/* ✨ Smart Instructions Logic ✨ */}
                     {expandedId === recipe.idMeal && (
                       <div className="instructions">
                         <h4>Instructions:</h4>
-                        <p>{recipe.strInstructions}</p>
+                        <ol className="instructions-list">
+                          {recipe.strInstructions
+                            .split('.') 
+                            .filter(step => step.trim().length > 0) 
+                            .map((step, index) => (
+                              <li key={index}>{step.trim()}.</li> 
+                            ))}
+                        </ol>
                       </div>
                     )}
                   </div>
@@ -200,8 +204,27 @@ function App() {
                     <div className="recipe-content">
                       <h3>{recipe.strMeal}</h3>
                       <div className="card-actions">
+                        {/* Adding "Show Details" to the favorites view as well */}
+                        <button 
+                          className="details-btn"
+                          onClick={() => setExpandedId(expandedId === recipe.idMeal ? null : recipe.idMeal)}
+                        >
+                          {expandedId === recipe.idMeal ? 'Hide' : 'Details'}
+                        </button>
                         <button className="favorite-btn active" onClick={() => toggleFavorite(recipe)}>❤️</button>
                       </div>
+                      
+                      {/* Expanded Details in Cookbook view */}
+                      {expandedId === recipe.idMeal && (
+                        <div className="instructions">
+                          <ol className="instructions-list">
+                            {recipe.strInstructions
+                              .split('.')
+                              .filter(s => s.trim().length > 0)
+                              .map((s, i) => <li key={i}>{s.trim()}.</li>)}
+                          </ol>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
