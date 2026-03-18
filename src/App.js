@@ -88,7 +88,7 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
-        <h1 onClick={() => setView('search')} style={{cursor: 'pointer'}}>🎮 PantryPlay</h1>
+        <h1 onClick={() => setView('search')} style={{cursor: 'pointer'}}>🥗 PantryPlay</h1>
         <div 
           className={`fav-counter ${view === 'favorites' ? 'active-tab' : ''}`} 
           onClick={() => setView(view === 'favorites' ? 'search' : 'favorites')}
