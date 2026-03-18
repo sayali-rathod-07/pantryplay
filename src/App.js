@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect import
 import './App.css';
 
-// 1.Ingredient List 
+// 1. Ingredient List 
 const INGREDIENTS_LIST = [
   { id: 1, name: 'Chicken', icon: '🍗' }, { id: 2, name: 'Beef', icon: '🥩' },
   { id: 3, name: 'Salmon', icon: '🐟' }, { id: 4, name: 'Pork', icon: '🥓' },
@@ -23,18 +23,28 @@ const INGREDIENTS_LIST = [
   { id: 35, name: 'Chocolate', icon: '🍫' }, { id: 36, name: 'Olive Oil', icon: '🫒' },
   { id: 37, name: 'Chili', icon: '🌶️' }, { id: 38, name: 'Ginger', icon: '🫚' },
   { id: 39, name: 'Basil', icon: '🌿' }, { id: 40, name: 'Cinnamon', icon: '🪵' },
-  { id: 41, name: 'Yogurt', icon: '🍦' }, {id:42, name: 'Pineapple', icon:'🍍'}
+  { id: 41, name: 'Yogurt', icon: '🍦' }, { id: 42, name: 'Pineapple', icon: '🍍' }
 ];
 
 function App() {
   // 2. States
   const [pantry, setPantry] = useState([]); 
   const [recipes, setRecipes] = useState([]); 
-  const [favorites, setFavorites] = useState([]); 
   const [loading, setLoading] = useState(false); 
   const [expandedId, setExpandedId] = useState(null); 
   const [view, setView] = useState('search'); 
-  const [isVeg, setIsVeg] = useState(false); // Veg state
+  const [isVeg, setIsVeg] = useState(false); 
+
+  // ✨ Persistent Favorites State (Step 1: Read from cabinet)
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem('pantryPlay_favs');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // ✨ Sync Favorites to LocalStorage (Step 2: Write to cabinet)
+  useEffect(() => {
+    localStorage.setItem('pantryPlay_favs', JSON.stringify(favorites));
+  }, [favorites]);
 
   // 3. Logic: Filtered Recipes calculation
   const filteredRecipes = isVeg 
@@ -115,7 +125,6 @@ function App() {
               </button>
             </section>
 
-            {/* Filter UI */}
             {recipes.length > 0 && (
               <div className="filter-container">
                 <label className="veg-toggle">
